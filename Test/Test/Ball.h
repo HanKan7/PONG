@@ -13,7 +13,5 @@ public:
 	Ball(float x, float y);
 	void UpdateBallPosition(sf::RenderWindow* window, float delta_s);
 	void CollisionCheck(Paddle paddle);
-
-
 };
 
