@@ -5,7 +5,7 @@ Paddle::Paddle(bool isAi)
     this->isAi = isAi;
     if (!isAi) 
     {
-        this->InitialPostion = sf::Vector2f(745.0f, 45.0f);
+        this->InitialPostion = sf::Vector2f(745.0f, 300.0f);
     }
     else {
         this->InitialPostion = sf::Vector2f(45.0f, 45.0f);

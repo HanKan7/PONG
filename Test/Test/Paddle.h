@@ -6,6 +6,14 @@
 #include <SFML/System.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Main.hpp>
+
+#include<iostream>
+#include<time.h>
+#include<filesystem>
+#include <vector>
+
+
+using namespace std;
 class Paddle
 {
 	public:
