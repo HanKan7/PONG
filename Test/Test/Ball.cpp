@@ -59,7 +59,7 @@ void Ball::CollisionCheck(Paddle paddle)
     sf::FloatRect ballRects = ball.getGlobalBounds();
     sf::FloatRect paddleRect = paddle.paddle.getGlobalBounds();
     if (ballRects.intersects(paddleRect)) {
-        if (!paddle.isAi) {
+        if (paddle.isRight) {
 
             if (ball.getPosition().y > (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 4 / 5)) //Greater than 80%
             {

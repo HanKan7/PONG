@@ -23,11 +23,15 @@ class Paddle
 		sf::Color color;
 		sf::FloatRect paddleRect;
 		bool isAi = false;
+		bool isRight = false;
 
-		Paddle(bool isAi);
+		Paddle();
+		Paddle(bool isAi, bool isRight);
+		Paddle(bool isAi, sf::Vector2f InitialPosition, bool isRight);
 		Paddle(sf::RectangleShape paddle, sf::Vector2f Size, sf::Vector2f InitialPos, sf::Color color);
 		void Clamp(sf::RectangleShape* paddle);
 		void AiMovement(sf::RectangleShape* ai, sf::Vector2f BallPosMinusAiPos, float t);
-		void Movement(sf::RectangleShape* paddle);	
+		void Movement(sf::RectangleShape* paddle, bool isRightPlayer);
+		void InitLeftPlayer(bool isAI);
 };
 
