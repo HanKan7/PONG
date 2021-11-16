@@ -42,7 +42,6 @@ Ball::Ball(float x , float y)
     texture.setSmooth(true);
     pokeball.setTexture(texture);
     pokeball.setScale(sf::Vector2f(0.03f, 0.03f));
-    cout << "Texture done";
 }
 
 void Ball::UpdateBallPosition(sf::RenderWindow* window, float delta_s) 
@@ -97,7 +96,10 @@ void Ball::CollisionCheck(Paddle paddle)
     sf::FloatRect ballRects = ball.getGlobalBounds();
     sf::FloatRect paddleRect = paddle.paddle.getGlobalBounds();
     if (ballRects.intersects(paddleRect)) {
+        this->paddle = &paddle;
         if (paddle.isRight) {
+            RightHit = true;
+            leftHit = false;
             bounce.play();
             if (ball.getPosition().y > (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 4 / 5)) //Greater than 80%
             {
@@ -136,7 +138,8 @@ void Ball::CollisionCheck(Paddle paddle)
         }
         else {
             bounce.play();
-
+            RightHit = false;
+            leftHit = true;
             if (ball.getPosition().y > (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 4 / 5)) //Greater than 80%
             {
                 ballVelocity.x = abs(ballVelocity.x);
@@ -164,5 +167,16 @@ void Ball::CollisionCheck(Paddle paddle)
             }
         }
         
+    }
+}
+
+void Ball::CollisionWithPowerUp(PowerUp power, Paddle* paddleHit)
+{
+    sf::FloatRect ballRects = ball.getGlobalBounds();
+    sf::FloatRect powerUpRect = power.ball.getGlobalBounds();
+    if (ballRects.intersects(powerUpRect))
+    {
+        //paddleHit->paddle.setSize(sf::Vector2f(paddleHit->paddle.getSize().x, paddleHit->paddle.getSize().y + 25.f));
+        paddleHit->paddle.setSize(sf::Vector2f(paddleHit->paddle.getSize().x, paddleHit->paddle.getSize().y + 15.f));
     }
 }

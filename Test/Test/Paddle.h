@@ -27,6 +27,7 @@ class Paddle
 		bool isAi = false;
 		bool isRight = false;
 		bool goingDown = true;
+		
 
 		Paddle();
 		Paddle(bool isAi, bool isRight);

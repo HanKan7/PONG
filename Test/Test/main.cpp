@@ -1,6 +1,5 @@
 #include "Ball.h"
 
-
 bool gameEnded = false;
 
 int normalMode = 0;
@@ -213,6 +212,16 @@ int Game(int humanVsHuman, int fourPlayerMode, int blockInTheMiddle, int powerUp
     Paddle smallLeftPlayer;
     Paddle smallRightPlayer;
 
+    Paddle wallLeft;
+    Paddle wallRight;
+
+    PowerUp power;
+
+    bool powerUpSpawned = false;
+    bool clockValueTaken = false;
+    int clockValue;
+    sf::Clock powerUpClock;
+
     sf::Text message;
     message.setFont(mainBall.font);
     message.setFillColor(sf::Color::White);
@@ -229,6 +238,8 @@ int Game(int humanVsHuman, int fourPlayerMode, int blockInTheMiddle, int powerUp
         leftPlayer.InitLeftPlayer(true);
     }
 
+    power.Init(&leftPlayer, &paddle);
+    
     if (fourPlayerMode == 1) 
     {
         smallLeftPlayer.InitSmallPaddle(false, sf::Vector2f(90.f, 45.f), sf::Color::Blue);
@@ -237,8 +248,8 @@ int Game(int humanVsHuman, int fourPlayerMode, int blockInTheMiddle, int powerUp
 
     if (blockInTheMiddle == 1) 
     {
-        smallLeftPlayer.InitSmallPaddle(false, sf::Vector2f(400.f, 45.f), sf::Color::Blue);
-        smallRightPlayer.InitSmallPaddle(true, sf::Vector2f(415.f, 45.f), sf::Color::Red);
+        wallLeft.InitSmallPaddle(false, sf::Vector2f(400.f, 45.f), sf::Color::Blue);
+        wallRight.InitSmallPaddle(true, sf::Vector2f(415.f, 45.f), sf::Color::Red);
     }
 
 
@@ -289,8 +300,8 @@ int Game(int humanVsHuman, int fourPlayerMode, int blockInTheMiddle, int powerUp
 
         if (blockInTheMiddle == 1) 
         {
-            smallLeftPlayer.WallMovement(5);
-            smallRightPlayer.WallMovement(5);
+            wallLeft.WallMovement(5);
+            wallRight.WallMovement(5);
         }
         
 #pragma endregion
@@ -308,13 +319,47 @@ int Game(int humanVsHuman, int fourPlayerMode, int blockInTheMiddle, int powerUp
             mainBall.CollisionCheck(smallLeftPlayer);
             mainBall.CollisionCheck(smallRightPlayer);
         }
-#pragma endregion       
+
+        if (blockInTheMiddle == 1) {
+            mainBall.CollisionCheck(wallLeft);
+            mainBall.CollisionCheck(wallRight);
+        }
+
+        if (powerUp == 1) {
+            if (mainBall.RightHit) 
+            {
+                mainBall.CollisionWithPowerUp(power, power.rightPaddle);
+            }
+            else {
+                mainBall.CollisionWithPowerUp(power, power.leftPaddle);
+            }
+        }
+#pragma endregion   
+
+#pragma region PowerUp
+        if (!powerUpSpawned) 
+        {
+            power.SpawnPowerUp();
+            powerUpSpawned = true;
+        }
+        if (!clockValueTaken) 
+        {
+            clockValue = powerUpClock.getElapsedTime().asSeconds();
+            clockValueTaken = true;
+        }
+        if (powerUpSpawned && powerUpClock.getElapsedTime().asSeconds() >= clockValue + 5) 
+        {
+            power.SpawnPowerUp();
+            clockValueTaken = false;
+        }
+#pragma endregion
+
 
 #pragma region AiPaddleClamp
         if (humanVsHuman == 2) 
         {
             sf::Vector2f BallPosMinusAiPos = mainBall.ball.getPosition() - leftPlayer.paddle.getPosition();
-            leftPlayer.AiMovement(&leftPlayer.paddle, BallPosMinusAiPos, 0.025f);
+            leftPlayer.AiMovement(&leftPlayer.paddle, BallPosMinusAiPos, 0.15f);
             leftPlayer.Clamp(&leftPlayer.paddle);
         }
 
@@ -343,6 +388,8 @@ int Game(int humanVsHuman, int fourPlayerMode, int blockInTheMiddle, int powerUp
                         mainBall.player1Score.setString("0");
                         mainBall.player2Score.setString("0");
                         paddle.paddle.setPosition(paddle.InitialPostion);
+                        paddle.paddle.setSize(sf::Vector2f(15.0f, 145.0f));
+                        leftPlayer.paddle.setSize(sf::Vector2f(15.0f, 145.0f));
                         mainBall.ball.setPosition(mainBall.InitialPosition);
                     }
 
@@ -374,6 +421,8 @@ int Game(int humanVsHuman, int fourPlayerMode, int blockInTheMiddle, int powerUp
                         mainBall.player1Score.setString("0");
                         mainBall.player2Score.setString("0");
                         paddle.paddle.setPosition(paddle.InitialPostion);
+                        paddle.paddle.setSize(sf::Vector2f(15.0f, 145.0f));
+                        leftPlayer.paddle.setSize(sf::Vector2f(15.0f, 145.0f));
                         mainBall.ball.setPosition(mainBall.InitialPosition);
                     }
 
@@ -397,16 +446,22 @@ int Game(int humanVsHuman, int fourPlayerMode, int blockInTheMiddle, int powerUp
         window.draw(leftPlayer.paddle);
         window.draw(mainBall.ball);
 
-        if (fourPlayerMode == 1 || blockInTheMiddle == 1) 
+        if (fourPlayerMode == 1) 
         {
             window.draw(smallLeftPlayer.paddle);
             window.draw(smallRightPlayer.paddle);
+        }
+        if (blockInTheMiddle == 1) {
+            window.draw(wallLeft.paddle);
+            window.draw(wallRight.paddle);
         }
         window.draw(mainBall.player1Score);
         window.draw(mainBall.player2Score);
 
         window.draw(paddle.neonSprite);
         window.draw(mainBall.pokeball);
+
+        window.draw(power.ball);
         window.display();
 #pragma endregion
     }
@@ -436,8 +491,11 @@ int main()
         }
         cout << "Do you want an obstacle in the middle? \n 1. Yes 2. No \n";
         cin >> blockInTheMiddle;
+
+        cout << "Do you want powerUps? \n 1.Yes 2.No\n";
+        cin >> powerUp;
         
-        Game(humanVsHuman, fourPlayerMode, blockInTheMiddle, 0);
+        Game(humanVsHuman, fourPlayerMode, blockInTheMiddle, powerUp);
 
     }
     
