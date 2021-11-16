@@ -406,7 +406,7 @@ int Game(int humanVsHuman, int fourPlayerMode, int blockInTheMiddle, int powerUp
             {
                 cout << "BLUE HAS WON THE GAME! \n";
                 cout << "Do you want to restart the game? Press Space to continue the game. Press Q to quit the game \n";
-                message.setString("YOU   HAVE   LOST   THE   GAME! \n Do you want to restart the game? \n Press    Space    to continue the game \n Press    Q    to quit the game \n");
+                message.setString("BLUE WON  THE  GAME! \n Do you want to restart the game? \n Press    Space    to continue the game \n Press    Q    to quit the game \n");
                 bool playerHasEnteredTheInput = false;
                 while (!playerHasEnteredTheInput)
                 {
@@ -461,7 +461,10 @@ int Game(int humanVsHuman, int fourPlayerMode, int blockInTheMiddle, int powerUp
         window.draw(paddle.neonSprite);
         window.draw(mainBall.pokeball);
 
-        window.draw(power.ball);
+        if (powerUp == 1) {
+            window.draw(power.ball);
+        }
+        
         window.display();
 #pragma endregion
     }

@@ -14,7 +14,7 @@ Ball::Ball(float x , float y)
 	ball.setPosition(InitialPosition);
     ballRect = ball.getGlobalBounds();
 
-    const char* fontPath = "arcadeclassic/ARCADECLASSIC.ttf";
+    const char* fontPath = "ARCADECLASSIC.ttf";
     if (!font.loadFromFile(fontPath))
     {
         // error...
