@@ -64,33 +64,73 @@ void Paddle::AiMovement(sf::RectangleShape* ai, sf::Vector2f BallPosMinusAiPos, 
     ai->setPosition(ai->getPosition().x, yt);
 }
 
-void Paddle::Movement(sf::RectangleShape* player, bool isRightPlayer)
+void Paddle::Movement(sf::RectangleShape* player, bool isRightPlayer, int moveSpeed, bool isSmallPlayer)
 {
-    if (isRightPlayer) 
+    if (!isSmallPlayer) 
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+        if (isRightPlayer)
         {
-            player->move(sf::Vector2f(0.0f, -10.5f));
-            Clamp(player);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+            {
+                player->move(sf::Vector2f(0.0f, -moveSpeed * 1.5f));
+                //neonSprite.setPosition(player->getPosition());
+                Clamp(player);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
+            {
+                player->move(sf::Vector2f(0.0f, moveSpeed * 1.5f));
+                //neonSprite.setPosition(player->getPosition());
+                Clamp(player);
+            }
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
-        {
-            player->move(sf::Vector2f(0.0f, 10.5f));
-            Clamp(player);
+        else {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+            {
+                player->move(sf::Vector2f(0.0f, -moveSpeed * 1.5f));
+                //neonSprite.setPosition(player->getPosition());
+                Clamp(player);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+            {
+                player->move(sf::Vector2f(0.0f, moveSpeed * 1.5f));
+                //neonSprite.setPosition(player->getPosition());
+                Clamp(player);
+            }
         }
     }
-    else {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+    else
+    {
+        if (isRightPlayer)
         {
-            player->move(sf::Vector2f(0.0f, -10.5f));
-            Clamp(player);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::O))
+            {
+                player->move(sf::Vector2f(0.0f, -moveSpeed ));
+                //neonSprite.setPosition(player->getPosition());
+                Clamp(player);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::L))
+            {
+                player->move(sf::Vector2f(0.0f, moveSpeed));
+                //neonSprite.setPosition(player->getPosition());
+                Clamp(player);
+            }
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
-        {
-            player->move(sf::Vector2f(0.0f, 10.5f));
-            Clamp(player);
+        else {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T))
+            {
+                player->move(sf::Vector2f(0.0f, -moveSpeed));
+                //neonSprite.setPosition(player->getPosition());
+                Clamp(player);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G))
+            {
+                player->move(sf::Vector2f(0.0f, moveSpeed));
+                //neonSprite.setPosition(player->getPosition());
+                Clamp(player);
+            }
         }
     }
+    
     
 }
 
@@ -106,4 +146,45 @@ void Paddle::InitLeftPlayer(bool isAi)
     paddle.setPosition(InitialPostion);
     paddle.setSize(Size);
     paddleRect = paddle.getGlobalBounds();
+}
+
+void Paddle::InitSmallPaddle(bool isRight, sf::Vector2f initPos, sf::Color color)
+{
+    this->isAi = isAi;
+    this->InitialPostion = initPos;
+    this->Size = sf::Vector2f(15.0f, 90.0f);
+    this->isRight = isRight;
+    this->color = color;
+
+    paddle.setFillColor(color);
+    paddle.setPosition(InitialPostion);
+    paddle.setSize(Size);
+    paddleRect = paddle.getGlobalBounds();
+    /*if (!neon.loadFromFile("838-8388453_neon-square-squares-kare-frame-frames-border-borders.png"))
+    {
+
+    }
+    neon.setSmooth(true);
+    neonSprite.setTexture(neon);*/
+}
+
+void Paddle::WallMovement(int moveSpeed) 
+{
+
+    if (paddle.getPosition().y >= 45.f && goingDown) {
+        //cout << "Moving\n";
+        paddle.move(sf::Vector2f(0.0f, moveSpeed));
+        if (paddle.getPosition().y >= 415.f) 
+        {
+            goingDown = false;
+        }
+    }
+    if (paddle.getPosition().y <= 415.f && !goingDown) {
+        //cout << "Moving\n";
+        paddle.move(sf::Vector2f(0.0f, -moveSpeed));
+        if (paddle.getPosition().y <= 45.f)
+        {
+            goingDown = true;
+        }
+    }
 }

@@ -13,6 +13,36 @@ Ball::Ball(float x , float y)
 	ball.setFillColor(color);
 	ball.setPosition(InitialPosition);
     ballRect = ball.getGlobalBounds();
+
+    const char* fontPath = "arcadeclassic/ARCADECLASSIC.ttf";
+    if (!font.loadFromFile(fontPath))
+    {
+        // error...
+        cout << "Failed to load " << fontPath << endl;
+    }
+
+    if (!buffer.loadFromFile("Game_Jump.wav")) 
+    {
+        cout << "Failed to load audio";
+    }
+    bounce.setBuffer(buffer);
+    player1Score.setFont(font);
+    player1Score.setFillColor(sf::Color::White);
+    player1Score.setPosition(600.f, 40.f);
+    player1Score.setString("0");
+    player2Score.setFont(font);
+    player2Score.setFillColor(sf::Color::White);
+    player2Score.setPosition(200.f, 40.f);
+    player2Score.setString("0");
+
+    if (!texture.loadFromFile("p.png"))
+    {
+
+    }
+    texture.setSmooth(true);
+    pokeball.setTexture(texture);
+    pokeball.setScale(sf::Vector2f(0.03f, 0.03f));
+    cout << "Texture done";
 }
 
 void Ball::UpdateBallPosition(sf::RenderWindow* window, float delta_s) 
@@ -22,20 +52,24 @@ void Ball::UpdateBallPosition(sf::RenderWindow* window, float delta_s)
 
     auto maxX = window->getSize().x - ball.getRadius() * 2.0f;
     if (ballPos.x >= maxX) {
+        bounce.play();
         ballVelocity.x = -abs(ballVelocity.x);
         ballPos.x = maxX;
         player2Point++;
         cout << "Left Player Score = " << player2Point << "           " << "Right Player Score = " << player1Point << endl;
+        player2Score.setString(to_string(player2Point));
         ball.setPosition(InitialPosition);
         ballVelocity = ballInitialVelocity;
         return;
     }
 
     if (ballPos.x <= 0.0) {
+        bounce.play();
         ballVelocity.x = abs(ballVelocity.x);
         ballPos.x = 0.f;
         player1Point++;
         cout << "Left Player Score = " << player2Point << "           " << "Right Player Score = " << player1Point << endl;
+        player1Score.setString(to_string(player1Point));
         ball.setPosition(InitialPosition);
         ballVelocity = ballInitialVelocity;
         return;
@@ -43,15 +77,19 @@ void Ball::UpdateBallPosition(sf::RenderWindow* window, float delta_s)
 
     auto maxY = window->getSize().y - ball.getRadius() * 2.0f;
     if (ballPos.y >= maxY) {
+        bounce.play();
         ballVelocity.y = -abs(ballVelocity.y);
         ballPos.y = maxY;
     }
 
     if (ballPos.y <= 0.0) {
+        bounce.play();
         ballVelocity.y = abs(ballVelocity.y);
         ballPos.y = 0.f;
     }
     ball.setPosition(ballPos);
+    //pokeball.setPosition(ballPos);
+    pokeball.setPosition(sf::Vector2f(ball.getPosition().x - ball.getRadius() + 2.f, ball.getPosition().y - ball.getRadius()));
 }
 
 void Ball::CollisionCheck(Paddle paddle) 
@@ -60,7 +98,7 @@ void Ball::CollisionCheck(Paddle paddle)
     sf::FloatRect paddleRect = paddle.paddle.getGlobalBounds();
     if (ballRects.intersects(paddleRect)) {
         if (paddle.isRight) {
-
+            bounce.play();
             if (ball.getPosition().y > (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 4 / 5)) //Greater than 80%
             {
                 ballVelocity.x = -abs(ballVelocity.x);
@@ -77,7 +115,7 @@ void Ball::CollisionCheck(Paddle paddle)
             }
             else if (ball.getPosition().y > (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 2 / 5) && ball.getPosition().y < (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 3 / 5)) //Greater than 40%, Less than 60%
             {
-                ballVelocity.x = -abs(ballVelocity.x);
+                ballVelocity.x = -abs(ballVelocity.x + 200.f);
                 ballVelocity.y = abs(0.f);
             }
             else if (ball.getPosition().y > (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 1 / 5) && ball.getPosition().y < (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 2 / 5)) //Greater than 20%, Less than 40%
@@ -97,7 +135,7 @@ void Ball::CollisionCheck(Paddle paddle)
 
         }
         else {
-            
+            bounce.play();
 
             if (ball.getPosition().y > (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 4 / 5)) //Greater than 80%
             {
@@ -111,7 +149,7 @@ void Ball::CollisionCheck(Paddle paddle)
             }
             else if (ball.getPosition().y > (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 2 / 5) && ball.getPosition().y < (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 3 / 5)) //Greater than 40%, Less than 60%
             {
-                ballVelocity.x = abs(ballVelocity.x);
+                ballVelocity.x = abs(ballVelocity.x + 200.f);
                 ballVelocity.y = abs(0.f);
             }
             else if (ball.getPosition().y > (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 1 / 5) && ball.getPosition().y < (paddle.paddle.getPosition().y + paddle.paddle.getSize().y * 2 / 5)) //Greater than 20%, Less than 40%

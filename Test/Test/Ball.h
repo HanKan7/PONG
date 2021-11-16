@@ -11,6 +11,15 @@ public:
 	sf::Vector2f ballInitialVelocity;
 	sf::Vector2f ballVelocity;
 	sf::FloatRect ballRect;
+	
+	sf::Font font;
+	sf::SoundBuffer buffer;
+	sf::Sound bounce;
+	sf::Text player1Score, player2Score;
+
+	sf::Texture texture;
+	sf::Sprite pokeball;
+
 	bool isWaiting = false;
 
 	int player1Point = 0, player2Point = 0;
